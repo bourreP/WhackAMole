@@ -2,6 +2,7 @@ package com.example.whackamole;
 
 import java.io.File;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,7 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class MainActivity extends ActionBarActivity {
+public class CameraActivity extends Activity {
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
 	private Uri fileUri;

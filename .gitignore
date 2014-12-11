@@ -3,3 +3,8 @@
 .settings/
 bin/
 gen/
+out/
+.idea/
+*~
+*.gradle
+*.iml
