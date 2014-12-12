@@ -32,6 +32,12 @@ public class SplashActivity extends Activity {
         videoView.start();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoView.pause();
+    }
+
     public void onVideoTouch(View view) {
         if (videoView != null && videoView.isPlaying() == false) {
             Intent intent = new Intent(this, CameraActivity.class);
