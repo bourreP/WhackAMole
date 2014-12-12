@@ -56,7 +56,7 @@ public class CameraActivity extends Activity {
 				mView.setBackground(new BitmapDrawable(getResources(), photo));
 
 			} else if (resultCode == RESULT_CANCELED) {
-				// User cancelled the image capture
+				finish();
 			} else {
 				// Image capture failed, advise user
 			}
