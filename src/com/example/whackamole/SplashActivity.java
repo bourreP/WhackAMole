@@ -24,6 +24,11 @@ public class SplashActivity extends Activity {
 
         videoView = (VideoView) findViewById(R.id.videoView);
         videoView.setVideoURI(uri);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         videoView.start();
     }
 
