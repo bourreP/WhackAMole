@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class CameraActivity extends Activity {
+public class MainActivity extends Activity {
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
 	private Uri fileUri;
