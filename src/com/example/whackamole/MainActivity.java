@@ -3,19 +3,14 @@ package com.example.whackamole;
 import java.io.File;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 
@@ -23,25 +18,47 @@ public class MainActivity extends Activity {
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
 	private Uri fileUri;
-	View mView;
+	private View mView;
+    private Game game;
+
+    private String STATE_GAME = "gamestate";
+    private String STATE_VIEW = "viewstate";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-			mView = new View(this);
-			setContentView(mView);
 
-			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mView = new View(this);
+        setContentView(mView);
 
-			File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-			File image = new File(imageFolder, "CapturedImage.jpg" );
-			fileUri = Uri.fromFile(image);
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-			// start the image capture Intent
-			startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = new File(imageFolder, "CapturedImage.jpg" );
+        fileUri = Uri.fromFile(image);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        // start the image capture Intent
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
 	}
 
-	@Override
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (game != null)
+            game.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (game != null)
+            game.resume();
+    }
+
+    @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -53,33 +70,16 @@ public class MainActivity extends Activity {
 				options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 				Bitmap photo = BitmapFactory.decodeFile(fileUri.getPath(), options);
 
-				mView.setBackground(new BitmapDrawable(getResources(), photo));
+                game = new Game(this, getApplicationContext(), photo);
 
-			} else if (resultCode == RESULT_CANCELED) {
+                game.start();
+
+            } else if (resultCode == RESULT_CANCELED) {
 				finish();
 			} else {
 				// Image capture failed, advise user
 			}
 
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 }
