@@ -2,6 +2,7 @@ package com.example.whackamole;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +30,15 @@ public class SplashActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        videoView.start();
+        videoView.setOnPreparedListener(new
+            MediaPlayer.OnPreparedListener()  {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    Log.d("Debug", "Video ready");
+                    videoView.start();
+                }
+            });
+
     }
 
     @Override
@@ -38,9 +47,11 @@ public class SplashActivity extends Activity {
         videoView.pause();
     }
 
+
+
     public void onVideoTouch(View view) {
         if (videoView != null && videoView.isPlaying() == false) {
-            Intent intent = new Intent(this, CameraActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
     }
