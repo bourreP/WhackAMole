@@ -41,9 +41,10 @@ public class DisplayManager extends View {
     private int height;
 
     private CopyOnWriteArrayList<Mole> moleManager;
+    private SoundManager soundManager;
 
 
-    public DisplayManager(Context context, Bitmap background_photo, CopyOnWriteArrayList<Mole> moleManager) {
+    public DisplayManager(Context context, SoundManager soundManager, Bitmap background_photo, CopyOnWriteArrayList<Mole> moleManager) {
         super(context);
 
         mPath = new Path();
@@ -61,6 +62,7 @@ public class DisplayManager extends View {
         mPaint.setStrokeWidth(10);
 
         this.moleManager = moleManager;
+        this.soundManager = soundManager;
 
         this.background = new BitmapDrawable(getResources(), background_photo);
 
@@ -80,7 +82,6 @@ public class DisplayManager extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d("Debug", "onDraw");
         mBitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap);
         
@@ -91,11 +92,23 @@ public class DisplayManager extends View {
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-
-        Log.d("Debug", "onDraw OK");
     }
 
     private void touch_start(float x, float y) {
+
+        Log.d("Debug", "Touch");
+        Iterator<Mole> e = moleManager.iterator();
+        while (e.hasNext()) {
+            Mole mole = e.next();
+            Log.d("Debug", "Mole is " + Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)));
+           if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= 200) {
+               Log.d("Debug", "Mole found");
+               moleManager.remove(mole);
+               soundManager.play_kick();
+               break;
+           }
+        }
+
         mPath.reset();
         mPath.moveTo(x, y);
         mX = x;
@@ -123,7 +136,6 @@ public class DisplayManager extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        Log.d("Debug", "X=" + x + " Y=" + y);
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:

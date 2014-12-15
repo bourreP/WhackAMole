@@ -20,6 +20,7 @@ public class Mole extends TimerTask{
     private int positionX;
     private int positionY;
     private int state;
+    private Timer timer;
 
     public Mole(Activity activity, BitmapManager bitmapManager, DisplayManager displayManager, int positionX, int positionY) {
         super();
@@ -31,14 +32,13 @@ public class Mole extends TimerTask{
         this.positionY = positionY;
         this.state = 0;
 
-        new Timer().scheduleAtFixedRate(this, 1000, 1000);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(this, 1000, 1000);
     }
 
     @Override
     public void run() {
-        Log.d("Debug", "Mole task run");
         if (state < bitmapManager.getMole().length -1) {
-            Log.d("Debug", "Mole state ++");
             state++;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -48,7 +48,6 @@ public class Mole extends TimerTask{
             });
 
         }
-        Log.d("Debug", "Mole task run OK");
         /* Else game over */
     }
 
@@ -62,5 +61,13 @@ public class Mole extends TimerTask{
 
     public int getPositionY() {
         return positionY;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        Log.d("Debug", "Mole dead");
+        super.finalize();
+
+        timer.cancel();
     }
 }

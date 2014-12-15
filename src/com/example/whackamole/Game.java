@@ -32,7 +32,7 @@ public class Game extends TimerTask {
 		soundManager = new SoundManager(context);
 		bitmapManager = new BitmapManager(context);
 		moleManager = new CopyOnWriteArrayList<Mole>();
-		displayManager = new DisplayManager(context, photo, moleManager);
+		displayManager = new DisplayManager(context, soundManager, photo, moleManager);
 
 		random = new Random();
 		size = new Point();
