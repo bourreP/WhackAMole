@@ -5,14 +5,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -26,9 +22,8 @@ public class Game extends TimerTask {
 	private DisplayManager displayManager;
 	private CopyOnWriteArrayList<Mole> moleManager;
 	private Point size;
-	DisplayMetrics metrics;
-	private Random r;
-	private boolean stateGame;
+	private Random random;
+    private int count;
 
 	public Game(Activity activity, Context context, Bitmap photo) {
 		super();
@@ -39,9 +34,9 @@ public class Game extends TimerTask {
 		moleManager = new CopyOnWriteArrayList<Mole>();
 		displayManager = new DisplayManager(context, photo, moleManager);
 
-		r = new Random();
+		random = new Random();
 		size = new Point();
-		stateGame = true;
+        count = 0;
 
 		activity.setContentView(displayManager);
 		activity.getWindowManager().getDefaultDisplay().getSize(size);
@@ -63,8 +58,8 @@ public class Game extends TimerTask {
 
 	@Override
 	public void run() {
-		Log.d("Debug", "Game task run");
-		moleManager.add(new Mole(activity, bitmapManager, displayManager, r.nextInt(size.x - 50), r.nextInt(size.y - 50)));
-		Log.d("Debug", "Game task run OK");
+        for (int i = 0; i <= count/5; i++)
+		    moleManager.add(new Mole(activity, bitmapManager, displayManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+        count++;
 	}
 }
