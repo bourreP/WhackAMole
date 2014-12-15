@@ -20,10 +20,7 @@ public class MainActivity extends Activity {
 	private Uri fileUri;
 	private View mView;
     private Game game;
-
-    private String STATE_GAME = "gamestate";
-    private String STATE_VIEW = "viewstate";
-
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

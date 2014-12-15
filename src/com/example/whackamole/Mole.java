@@ -32,7 +32,6 @@ public class Mole extends TimerTask{
         this.state = 0;
 
         new Timer().scheduleAtFixedRate(this, 1000, 1000);
-
     }
 
     @Override

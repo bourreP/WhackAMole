@@ -14,7 +14,8 @@ public class SoundManager {
     private MediaPlayer mainThemePlayer;
     private int kickEffect;
 
-    public SoundManager(Context context) {
+    @SuppressWarnings("deprecation")
+	public SoundManager(Context context) {
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         mainThemePlayer = MediaPlayer.create(context, R.raw.overworld);
 

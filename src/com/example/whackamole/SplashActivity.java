@@ -38,7 +38,6 @@ public class SplashActivity extends Activity {
                     videoView.start();
                 }
             });
-
     }
 
     @Override

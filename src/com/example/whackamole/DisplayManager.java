@@ -10,12 +10,15 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.renderscript.Element;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by nils on 13/12/14.
@@ -37,10 +40,10 @@ public class DisplayManager extends View {
     private int width;
     private int height;
 
-    private Vector<Mole> moleManager;
+    private CopyOnWriteArrayList<Mole> moleManager;
 
 
-    public DisplayManager(Context context, Bitmap background_photo, Vector<Mole> moleManager) {
+    public DisplayManager(Context context, Bitmap background_photo, CopyOnWriteArrayList<Mole> moleManager) {
         super(context);
 
         mPath = new Path();
@@ -80,8 +83,10 @@ public class DisplayManager extends View {
         Log.d("Debug", "onDraw");
         mBitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap);
-
-        for (Mole mole : moleManager) {
+        
+        Iterator<Mole> e = moleManager.iterator();
+        while (e.hasNext()) {
+        	Mole mole = e.next();
             mCanvas.drawBitmap(mole.getBitmap(),mole.getPositionX(),mole.getPositionY(),mBitmapPaint);
         }
 
