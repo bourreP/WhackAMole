@@ -13,19 +13,23 @@ public class SoundManager {
     private SoundPool soundPool;
     private MediaPlayer mainThemePlayer;
     private int kickEffect;
+    private int bombEffect;
 
     @SuppressWarnings("deprecation")
 	public SoundManager(Context context) {
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundPool = new SoundPool(20, AudioManager.STREAM_MUSIC, 0);
         mainThemePlayer = MediaPlayer.create(context, R.raw.overworld);
 
         kickEffect = soundPool.load(context, R.raw.kick, 1);
-
-
+        bombEffect = soundPool.load(context, R.raw.bomb, 1);
     }
 
     public void play_kick() {
         soundPool.play(kickEffect, 1, 1, 1, 0, 1);
+    }
+
+    public void play_bomb()  {
+        soundPool.play(bombEffect, 1, 1, 1, 0, 1);
     }
 
     public void play_theme() {

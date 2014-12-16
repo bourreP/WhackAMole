@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.util.DisplayMetrics;
 
 import java.util.Random;
 import java.util.Timer;
@@ -21,9 +20,11 @@ public class Game extends TimerTask {
 	private BitmapManager bitmapManager;
 	private DisplayManager displayManager;
 	private CopyOnWriteArrayList<Mole> moleManager;
+    private CopyOnWriteArrayList<Explosion> explosionManager;
 	private Point size;
 	private Random random;
-    private int count;
+    private int counter;
+    private int difficulty;
     private Timer timer;
 
 	public Game(Activity activity, Context context, Bitmap photo) {
@@ -33,16 +34,18 @@ public class Game extends TimerTask {
 		soundManager = new SoundManager(context);
 		bitmapManager = new BitmapManager(context);
 		moleManager = new CopyOnWriteArrayList<Mole>();
-		displayManager = new DisplayManager(context, soundManager, photo, moleManager);
+        explosionManager = new CopyOnWriteArrayList<Explosion>();
+		displayManager = new DisplayManager(context, soundManager, photo, moleManager, explosionManager, bitmapManager);
 
 		random = new Random();
 		size = new Point();
-        count = 0;
+        difficulty = 0;
+        counter = 0;
 
 		activity.setContentView(displayManager);
 		activity.getWindowManager().getDefaultDisplay().getSize(size);
 		timer = new Timer();
-        timer.scheduleAtFixedRate(this, 1000, 1000);
+        timer.scheduleAtFixedRate(this, 0, 100);
 
 	}
 
@@ -64,14 +67,28 @@ public class Game extends TimerTask {
 
 	@Override
 	public void run() {
-        for (Mole mole : moleManager) {
-            mole.updateState();
+
+        for (Explosion explosion : explosionManager) {
+            if (explosion.hasNextState())
+                explosion.nextState();
+            else
+                explosionManager.remove(explosion);
         }
 
-        for (int i = 0; i <= count/5; i++) {
-            moleManager.add(new Mole(bitmapManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+        if (counter == 10) {
+            for (Mole mole : moleManager) {
+                if (mole.hasNextState())
+                    mole.nextState();
+                // Else game over
+            }
+            for (int i = 0; i <= difficulty/5; i++) {
+                moleManager.add(new Mole(bitmapManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+            }
+            counter = 0;
+            difficulty++;
         }
-        count++;
+
+        counter ++;
 
         activity.runOnUiThread(new Runnable() {
             @Override

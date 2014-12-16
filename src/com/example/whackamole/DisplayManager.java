@@ -25,44 +25,42 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DisplayManager extends View {
 
-    private static final float TOUCH_TOLERANCE = 4;
+    private static final float TOUCH_TOLERANCE = 50;
+    private static final float EXPLOSION_GAP = 300;
+    private static final int MAX_EXPLOSIONS = 5;
+    private static final float CORRECTION_X = 500;
+    private static final float CORRECTION_Y = 200;
 
     private BitmapDrawable background;
     private Bitmap  mBitmap;
     private Canvas  mCanvas;
-    private Path    mPath;
     private Paint   mBitmapPaint;
-    private Paint   mPaint;
 
     private float   mX, mY;
     private boolean         moved;
+    private int explosionsLeft;
 
     private int width;
     private int height;
 
     private CopyOnWriteArrayList<Mole> moleManager;
+    private CopyOnWriteArrayList<Explosion> explosionManager;
     private SoundManager soundManager;
+    private BitmapManager bitmapManager;
 
 
-    public DisplayManager(Context context, SoundManager soundManager, Bitmap background_photo, CopyOnWriteArrayList<Mole> moleManager) {
+    public DisplayManager(Context context, SoundManager soundManager, Bitmap background_photo, CopyOnWriteArrayList<Mole> moleManager, CopyOnWriteArrayList<Explosion> explosionManager, BitmapManager bitmapManager) {
         super(context);
 
-        mPath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
         moved = false;
 
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setColor(0xFFFF0000);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        // mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(10);
 
         this.moleManager = moleManager;
         this.soundManager = soundManager;
+        this.explosionManager = explosionManager;
+        this.bitmapManager = bitmapManager;
 
         this.background = new BitmapDrawable(getResources(), background_photo);
 
@@ -84,42 +82,64 @@ public class DisplayManager extends View {
     protected void onDraw(Canvas canvas) {
         mBitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap);
-        
-        Iterator<Mole> e = moleManager.iterator();
-        while (e.hasNext()) {
-        	Mole mole = e.next();
-            mCanvas.drawBitmap(mole.getBitmap(),mole.getPositionX(),mole.getPositionY(),mBitmapPaint);
+
+        if (!moleManager.isEmpty()) {
+            Iterator<Mole> e = moleManager.iterator();
+            while (e.hasNext()) {
+                Mole mole = e.next();
+                mCanvas.drawBitmap(mole.getBitmap(), mole.getPositionX(), mole.getPositionY(), mBitmapPaint);
+            }
+        }
+
+        if (!explosionManager.isEmpty()) {
+            Iterator<Explosion> e = explosionManager.iterator();
+            while (e.hasNext()) {
+                Log.d("Debug", "draw explosion");
+                Explosion explosion = e.next();
+                mCanvas.drawBitmap(explosion.getBitmap(), explosion.getPositionX(), explosion.getPositionY(), mBitmapPaint);
+            }
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
     }
 
     private void touch_start(float x, float y) {
-
-        Log.d("Debug", "Touch");
         Iterator<Mole> e = moleManager.iterator();
         while (e.hasNext()) {
             Mole mole = e.next();
-            Log.d("Debug", "Mole is " + Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)));
            if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= 200) {
-               Log.d("Debug", "Mole found");
                moleManager.remove(mole);
                soundManager.play_kick();
                break;
            }
         }
 
-        mPath.reset();
-        mPath.moveTo(x, y);
+        moved = false;
         mX = x;
         mY = y;
-
     }
     private void touch_move(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            moved = true;
+        if (!moved) {
+            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+                explosionsLeft = MAX_EXPLOSIONS;
+                soundManager.play_bomb();
+                explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
+                explosionsLeft--;
+                moved = true;
+                mX = x;
+                mY = y;
+            }
+        }
+        else if (dx >= EXPLOSION_GAP || dy >= EXPLOSION_GAP) {
+            if (explosionsLeft > 0) {
+                soundManager.play_bomb();
+                explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
+                mX = x;
+                mY = y;
+                explosionsLeft--;
+            }
         }
     }
     private void touch_up(float x, float y) {
@@ -128,7 +148,6 @@ public class DisplayManager extends View {
         {
 
         }
-        mPath.reset();
         moved = false;
     }
 
@@ -140,15 +159,12 @@ public class DisplayManager extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touch_start(x, y);
-                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 touch_move(x, y);
-                //invalidate();
                 break;
             case MotionEvent.ACTION_UP:
                 touch_up(x,y);
-                //invalidate();
                 break;
         }
         return true;

@@ -42,10 +42,16 @@ public class Mole{
     }
 
 
-    public void updateState() {
+    public boolean hasNextState() {
+        if (state < bitmapManager.getMole().length -1)
+            return true;
+        else
+            return false;
+    }
+
+    public void nextState() {
         if (state < bitmapManager.getMole().length -1) {
             state++;
         }
-        /* Else game over */
     }
 }
