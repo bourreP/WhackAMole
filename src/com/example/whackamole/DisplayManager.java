@@ -30,6 +30,7 @@ public class DisplayManager extends View {
     private static final int MAX_EXPLOSIONS = 5;
     private static final float CORRECTION_X = 500;
     private static final float CORRECTION_Y = 200;
+    private static final double EXPLOSION_RADIUS = 500;
 
     private BitmapDrawable background;
     private Bitmap  mBitmap;
@@ -94,7 +95,6 @@ public class DisplayManager extends View {
         if (!explosionManager.isEmpty()) {
             Iterator<Explosion> e = explosionManager.iterator();
             while (e.hasNext()) {
-                Log.d("Debug", "draw explosion");
                 Explosion explosion = e.next();
                 mCanvas.drawBitmap(explosion.getBitmap(), explosion.getPositionX(), explosion.getPositionY(), mBitmapPaint);
             }
@@ -127,6 +127,13 @@ public class DisplayManager extends View {
                 soundManager.play_bomb();
                 explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
                 explosionsLeft--;
+                Iterator<Mole> e = moleManager.iterator();
+                while (e.hasNext()) {
+                    Mole mole = e.next();
+                    if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= EXPLOSION_RADIUS) {
+                        moleManager.remove(mole);
+                    }
+                }
                 moved = true;
                 mX = x;
                 mY = y;
@@ -136,6 +143,13 @@ public class DisplayManager extends View {
             if (explosionsLeft > 0) {
                 soundManager.play_bomb();
                 explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
+                Iterator<Mole> e = moleManager.iterator();
+                while (e.hasNext()) {
+                    Mole mole = e.next();
+                    if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= EXPLOSION_RADIUS) {
+                        moleManager.remove(mole);
+                    }
+                }
                 mX = x;
                 mY = y;
                 explosionsLeft--;
