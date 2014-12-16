@@ -12,7 +12,7 @@ import java.util.TimerTask;
 /**
  * Created by nils on 14/12/14.
  */
-public class Mole extends TimerTask{
+public class Mole{
 
     private Activity activity;
     private BitmapManager bitmapManager;
@@ -20,7 +20,6 @@ public class Mole extends TimerTask{
     private int positionX;
     private int positionY;
     private int state;
-    private Timer timer;
 
     public Mole(Activity activity, BitmapManager bitmapManager, DisplayManager displayManager, int positionX, int positionY) {
         super();
@@ -32,23 +31,6 @@ public class Mole extends TimerTask{
         this.positionY = positionY;
         this.state = 0;
 
-        timer = new Timer();
-        timer.scheduleAtFixedRate(this, 1000, 1000);
-    }
-
-    @Override
-    public void run() {
-        if (state < bitmapManager.getMole().length -1) {
-            state++;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    displayManager.invalidate();
-                }
-            });
-
-        }
-        /* Else game over */
     }
 
     public Bitmap getBitmap() {
@@ -63,11 +45,18 @@ public class Mole extends TimerTask{
         return positionY;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        Log.d("Debug", "Mole dead");
-        super.finalize();
 
-        timer.cancel();
+    public void updateState() {
+        if (state < bitmapManager.getMole().length -1) {
+            state++;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayManager.invalidate();
+                }
+            });
+
+        }
+        /* Else game over */
     }
 }

@@ -58,6 +58,10 @@ public class Game extends TimerTask {
 
 	@Override
 	public void run() {
+        for (Mole mole : moleManager) {
+            mole.updateState();
+        }
+
         for (int i = 0; i <= count/5; i++)
 		    moleManager.add(new Mole(activity, bitmapManager, displayManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
         count++;
