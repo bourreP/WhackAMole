@@ -14,19 +14,15 @@ import java.util.TimerTask;
  */
 public class Mole{
 
-    private Activity activity;
     private BitmapManager bitmapManager;
-    private DisplayManager displayManager;
     private int positionX;
     private int positionY;
     private int state;
 
-    public Mole(Activity activity, BitmapManager bitmapManager, DisplayManager displayManager, int positionX, int positionY) {
+    public Mole(BitmapManager bitmapManager, int positionX, int positionY) {
         super();
 
-        this.activity = activity;
         this.bitmapManager = bitmapManager;
-        this.displayManager = displayManager;
         this.positionX = positionX;
         this.positionY = positionY;
         this.state = 0;
@@ -49,13 +45,6 @@ public class Mole{
     public void updateState() {
         if (state < bitmapManager.getMole().length -1) {
             state++;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    displayManager.invalidate();
-                }
-            });
-
         }
         /* Else game over */
     }

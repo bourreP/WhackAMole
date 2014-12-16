@@ -24,6 +24,7 @@ public class Game extends TimerTask {
 	private Point size;
 	private Random random;
     private int count;
+    private Timer timer;
 
 	public Game(Activity activity, Context context, Bitmap photo) {
 		super();
@@ -40,7 +41,8 @@ public class Game extends TimerTask {
 
 		activity.setContentView(displayManager);
 		activity.getWindowManager().getDefaultDisplay().getSize(size);
-		new Timer().scheduleAtFixedRate(this, 1000, 1000);
+		timer = new Timer();
+        timer.scheduleAtFixedRate(this, 1000, 1000);
 
 	}
 
@@ -56,14 +58,26 @@ public class Game extends TimerTask {
 		soundManager.resume_theme();
 	}
 
+    public void stop() {
+        timer.cancel();
+    }
+
 	@Override
 	public void run() {
         for (Mole mole : moleManager) {
             mole.updateState();
         }
 
-        for (int i = 0; i <= count/5; i++)
-		    moleManager.add(new Mole(activity, bitmapManager, displayManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+        for (int i = 0; i <= count/5; i++) {
+            moleManager.add(new Mole(bitmapManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+        }
         count++;
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayManager.invalidate();
+            }
+        });
 	}
 }
