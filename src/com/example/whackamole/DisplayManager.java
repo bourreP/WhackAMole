@@ -40,6 +40,8 @@ public class DisplayManager extends View {
     private float   mX, mY;
     private boolean         moved;
     private int explosionsLeft;
+    private long lastTimeExplosion;
+
 
     private int width;
     private int height;
@@ -62,6 +64,7 @@ public class DisplayManager extends View {
         this.soundManager = soundManager;
         this.explosionManager = explosionManager;
         this.bitmapManager = bitmapManager;
+        this.lastTimeExplosion = -100000;
 
         this.background = new BitmapDrawable(getResources(), background_photo);
 
@@ -122,22 +125,25 @@ public class DisplayManager extends View {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (!moved) {
-            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                explosionsLeft = MAX_EXPLOSIONS;
-                soundManager.play_bomb();
-                explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
-                explosionsLeft--;
-                Iterator<Mole> e = moleManager.iterator();
-                while (e.hasNext()) {
-                    Mole mole = e.next();
-                    if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= EXPLOSION_RADIUS) {
-                        moleManager.remove(mole);
-                    }
-                }
-                moved = true;
-                mX = x;
-                mY = y;
-            }
+        	if (System.currentTimeMillis() - lastTimeExplosion >= 10000) {
+        		lastTimeExplosion = System.currentTimeMillis();
+        		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+        			explosionsLeft = MAX_EXPLOSIONS;
+        			soundManager.play_bomb();
+        			explosionManager.add(new Explosion(bitmapManager, x - CORRECTION_X, y - CORRECTION_Y));
+        			explosionsLeft--;
+        			Iterator<Mole> e = moleManager.iterator();
+        			while (e.hasNext()) {
+        				Mole mole = e.next();
+        				if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= EXPLOSION_RADIUS) {
+        					moleManager.remove(mole);
+        				}
+        			}
+        			moved = true;
+        			mX = x;
+        			mY = y;
+        		}
+        	}
         }
         else if (dx >= EXPLOSION_GAP || dy >= EXPLOSION_GAP) {
             if (explosionsLeft > 0) {

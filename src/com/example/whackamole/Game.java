@@ -26,6 +26,7 @@ public class Game extends TimerTask {
     private int counter;
     private int difficulty;
     private Timer timer;
+    private Runnable taskDispayManager;
 
 	public Game(Activity activity, Context context, Bitmap photo) {
 		super();
@@ -46,6 +47,12 @@ public class Game extends TimerTask {
 		activity.getWindowManager().getDefaultDisplay().getSize(size);
 		timer = new Timer();
         timer.scheduleAtFixedRate(this, 0, 100);
+        taskDispayManager = new Runnable() {
+            @Override
+            public void run() {
+                displayManager.invalidate();
+            }
+        };
 
 	}
 
@@ -90,11 +97,6 @@ public class Game extends TimerTask {
 
         counter ++;
 
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                displayManager.invalidate();
-            }
-        });
-	}
+        activity.runOnUiThread(taskDispayManager);
+     }
 }
