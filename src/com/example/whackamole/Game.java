@@ -96,7 +96,7 @@ public class Game extends TimerTask {
         }
 
         counter ++;
-
+        
         activity.runOnUiThread(taskDispayManager);
      }
 }

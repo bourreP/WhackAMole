@@ -23,9 +23,9 @@ public class Mole{
         super();
 
         this.bitmapManager = bitmapManager;
+        this.state = 0;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.state = 0;
 
     }
 

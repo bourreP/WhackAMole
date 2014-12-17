@@ -14,9 +14,9 @@ public class Explosion {
 
     public Explosion(BitmapManager bitmapManager, float positionX, float positionY) {
         this.bitmapManager = bitmapManager;
-        this.positionX = positionX;
-        this.positionY = positionY;
         this.state = 0;
+        this.positionX = positionX - this.bitmapManager.getExplosion()[state].getWidth()/2;
+        this.positionY = positionY - this.bitmapManager.getExplosion()[state].getHeight()/2;
     }
 
     public Bitmap getBitmap() {
