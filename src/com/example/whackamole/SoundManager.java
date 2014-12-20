@@ -36,6 +36,12 @@ public class SoundManager {
 
     public void play_theme() {
         mainThemePlayer.start();
+        mainThemePlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mainThemePlayer.start();
+            }
+        });
     }
 
     public void play_gameOver() {
