@@ -9,8 +9,10 @@ import android.graphics.BitmapFactory;
  */
 public class BitmapManager {
 
+    private Bitmap moleIcon;
     private Bitmap[] mole;
     private Bitmap[] explosion;
+    private Bitmap bombIcon;
 
     public BitmapManager(Context context) {
         mole = new Bitmap[7];
@@ -34,6 +36,9 @@ public class BitmapManager {
         explosion[7] = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion_8);
         explosion[8] = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion_9);
         explosion[9] = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion_10);
+
+        bombIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
+        moleIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.mole);
     }
 
     public Bitmap[] getMole() {
@@ -43,4 +48,8 @@ public class BitmapManager {
     public Bitmap[] getExplosion() {
         return explosion;
     }
+
+    public Bitmap getBombIcon() { return bombIcon; }
+
+    public Bitmap getMoleIcon() { return moleIcon; }
 }
