@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DisplayManager extends View {
 
-	private static final float TOUCH_TOLERANCE = 50;
+	private static final float TOUCH_TOLERANCE = 75;
 	private static final float EXPLOSION_GAP = 200;
 	private static final int MAX_EXPLOSIONS = 5;
 	private static final double EXPLOSION_RADIUS = 500;
@@ -102,7 +102,8 @@ public class DisplayManager extends View {
 			Iterator<Mole> e = moleManager.iterator();
 			while (e.hasNext()) {
 				Mole mole = e.next();
-				mCanvas.drawBitmap(mole.getBitmap(), mole.getPositionX(), mole.getPositionY(), mBitmapPaint);
+                Bitmap bitmap = mole.getBitmap();
+				mCanvas.drawBitmap(bitmap, mole.getPositionX() - bitmap.getWidth()/2, mole.getPositionY() - bitmap.getHeight()/2, mBitmapPaint);
 			}
 		}
 
@@ -110,26 +111,17 @@ public class DisplayManager extends View {
 			Iterator<Explosion> e = explosionManager.iterator();
 			while (e.hasNext()) {
 				Explosion explosion = e.next();
-				mCanvas.drawBitmap(explosion.getBitmap(), explosion.getPositionX(), explosion.getPositionY(), mBitmapPaint);
+                Bitmap bitmap = explosion.getBitmap();
+				mCanvas.drawBitmap(bitmap, explosion.getPositionX() - bitmap.getWidth()/2, explosion.getPositionY() - bitmap.getHeight()/2, mBitmapPaint);
 			}
 		}
 
+        mCanvas.drawText(counterExplosion() + "       Score : " + Integer.toString(nbMole), 100, 100, mTextPaint);
+
 		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-		mCanvas.drawText(counterExplosion() + "       Score : " + Integer.toString(nbMole), 100, 100, mTextPaint);
 	}
 
 	private void touch_start(float x, float y) {
-		Iterator<Mole> e = moleManager.iterator();
-		while (e.hasNext()) {
-			Mole mole = e.next();
-			if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= 100) {
-				moleManager.remove(mole);
-				nbMole++;
-				soundManager.play_kick();
-				break;
-			}
-		}
-
 		moved = false;
 		mX = x;
 		mY = y;
@@ -181,7 +173,16 @@ public class DisplayManager extends View {
 		// kill this so we don't double draw
 		if(!moved)
 		{
-
+            Iterator<Mole> e = moleManager.iterator();
+            while (e.hasNext()) {
+                Mole mole = e.next();
+                if (Math.sqrt(Math.pow(mole.getPositionX() - x, 2) + Math.pow(mole.getPositionY() - y, 2)) <= 100) {
+                    moleManager.remove(mole);
+                    nbMole++;
+                    soundManager.play_kick();
+                    break;
+                }
+            }
 		}
 		moved = false;
 	}

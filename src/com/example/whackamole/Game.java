@@ -15,7 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Game extends TimerTask {
 
-	private Activity activity;
+
+    private static final int MARGE = 150;
+    private Activity activity;
 	private SoundManager soundManager;
 	private BitmapManager bitmapManager;
 	private DisplayManager displayManager;
@@ -89,7 +91,7 @@ public class Game extends TimerTask {
                 // Else game over
             }
             for (int i = 0; i <= difficulty/5; i++) {
-                moleManager.add(new Mole(bitmapManager, random.nextInt(size.x - 50), random.nextInt(size.y - 50)));
+                moleManager.add(new Mole(bitmapManager, random.nextInt(size.x - 2*MARGE) + MARGE, random.nextInt(size.y - 2*MARGE) + MARGE));
             }
             counter = 0;
             difficulty++;
